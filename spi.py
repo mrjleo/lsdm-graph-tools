@@ -13,7 +13,7 @@ def main():
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
 	g = Graph.from_file(args.INPUT_FILE)
-	print('done!')
+	print('created graph with {} nodes'.format(g.vert_count()))
 	print(g.graph)
 
 

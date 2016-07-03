@@ -29,6 +29,12 @@ class Graph(object):
 		if not v_to in self.graph[v_from]:
 			self.graph[v_from].append(v_to)
 
+	def vert_count(self):
+		return len(self.graph)
+
+	def get_connected_verts(self, vert):
+		return self.graph[vert]
+
 	@staticmethod
 	def from_file(file_name):
 		g = Graph()
