@@ -52,7 +52,7 @@ class Graph(object):
 
 
 	@staticmethod
-	def from_file(file_name, pattern='\d+\t\d+', split_by='\t'):
+	def from_file(file_name, pattern, split_by):
 		g = Graph()
 		input_file = open(file_name, 'r')
 		pattern_edge = re.compile(pattern)

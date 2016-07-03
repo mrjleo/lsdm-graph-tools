@@ -58,27 +58,15 @@ def shortest_path(vert1, vert2, d):
 	return [sp, hop];
 
 
-def create_graph(input_file, pattern, split_by):
-	if pattern:
-		if split_by:
-			return Graph.from_file(input_file, pattern=pattern, split_by=split_by)
-		else:
-			return Graph.from_file(input_file, pattern=pattern)
-	elif split_by:
-		return Graph.from_file(input_file, split_by=split_by)
-	else:
-		return Graph.from_file(input_file)
-
-
 def main():
 	ap = ArgumentParser()
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
-	ap.add_argument('-p', '--pattern', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
-	ap.add_argument('-s', '--split', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
+	ap.add_argument('--pattern', default='\d+\\t\d+', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
+	ap.add_argument('--split', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
 	args = ap.parse_args()
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
-	g = create_graph(args.INPUT_FILE, args.pattern, args.split)
+	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
 	print('created graph with {} vertices'.format(len(g.get_verts())))
 	print('creating landmark labels...')
 	ll = create_ll_naiive(g)
