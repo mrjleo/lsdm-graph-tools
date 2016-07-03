@@ -44,6 +44,32 @@ def create_ll_naiive(graph):
 	return d
 
 
+def shortest_path(vert1, vert2, d):
+	sp = float("inf")
+	hop = '(none)'
+
+	for vert in d:
+		if vert in d[vert1] and vert in d[vert2]:
+			path = d[vert1][vert] + d[vert2][vert]
+			if path < sp:
+				sp = path
+				hop = vert
+
+	return [sp, hop];
+
+
+def create_graph(input_file, pattern, split_by):
+	if pattern:
+		if split_by:
+			return Graph.from_file(input_file, pattern=pattern, split_by=split_by)
+		else:
+			return Graph.from_file(input_file, pattern=pattern)
+	elif split_by:
+		return Graph.from_file(input_file, split_by=split_by)
+	else:
+		return Graph.from_file(input_file)
+
+
 def main():
 	ap = ArgumentParser()
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
@@ -52,18 +78,12 @@ def main():
 	args = ap.parse_args()
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
-	if args.pattern:
-		if args.split:
-			g = Graph.from_file(args.INPUT_FILE, pattern=args.pattern, split_by=args.split)
-		else:
-			g = Graph.from_file(args.INPUT_FILE, pattern=args.pattern)
-	elif args.split:
-		g = Graph.from_file(args.INPUT_FILE, split_by=args.split)
-	else:
-		g = Graph.from_file(args.INPUT_FILE)
+	g = create_graph(args.INPUT_FILE, args.pattern, args.split)
 	print('created graph with {} vertices'.format(len(g.get_verts())))
+	print('creating landmark labels...')
+	ll = create_ll_naiive(g)
 
-	print(create_ll_naiive(g))
+	print(shortest_path('0','4', ll))
 
 
 if __name__ == '__main__':
