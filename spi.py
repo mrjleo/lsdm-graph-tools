@@ -1,7 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sys
 import argparse
 from graph import Graph
 
@@ -13,7 +12,7 @@ def main():
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
 	g = Graph.from_file(args.INPUT_FILE)
-	print('created graph with {} nodes'.format(g.vert_count()))
+	print('created graph with {} nodes'.format(len(g.get_verts())))
 	print(g.graph)
 
 
