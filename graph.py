@@ -52,16 +52,15 @@ class Graph(object):
 
 
 	@staticmethod
-	def from_file(file_name, pattern='\d+\t\d+'):
+	def from_file(file_name, pattern='\d+\t\d+', split_by='\t'):
 		g = Graph()
 		input_file = open(file_name, 'r')
 		pattern_edge = re.compile(pattern)
 
 		for line in input_file:
 			line = line.strip()
-			# skip comments
 			if pattern_edge.match(line):
-				edge = line.split('\t')
+				edge = re.split(split_by, line)
 				g.add_undirected_edge(edge)
 
 		return g
