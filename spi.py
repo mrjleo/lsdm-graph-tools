@@ -3,6 +3,28 @@
 
 from argparse import ArgumentParser
 from graph import Graph
+from collections import deque
+
+
+def bfs(graph, vert_root):
+	# empty index
+	l = dict.fromkeys(graph.get_verts(), 0)
+	visited = dict.fromkeys(graph.get_verts(), False)
+	q = deque()
+
+	l[vert_root] = 0
+	visited[vert_root] = True
+	q.append(vert_root)
+	
+	while q:
+		vert = q.pop()
+		for neighbor in graph.get_connected_verts(vert):
+			if not visited[neighbor]:
+				l[neighbor] = l[vert] + 1
+				q.append(neighbor)
+				visited[neighbor] = True
+
+	return l
 
 
 def main():
@@ -23,7 +45,8 @@ def main():
 	else:
 		g = Graph.from_file(args.INPUT_FILE)
 	print('created graph with {} nodes'.format(len(g.get_verts())))
-	print(g.graph)
+
+	print(bfs(g, '0'))
 
 
 if __name__ == '__main__':

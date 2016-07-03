@@ -4,6 +4,7 @@
 1	2
 1	3
 2	3
+3	4
 
 # this edge should already exist in an undirected graph...
 1	0
