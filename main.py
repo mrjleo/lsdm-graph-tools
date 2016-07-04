@@ -90,6 +90,7 @@ def main():
 	ap.add_argument('--split', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
 	ap.add_argument('--fromfile', help='import labeled landmarks from JSON file')
 	ap.add_argument('--save', help='dump the labeled landmarks into a JSON file')
+	ap.add_argument('-spi', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 und V2')
 	args = ap.parse_args()
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
@@ -102,6 +103,10 @@ def main():
 	else:
 		print('creating landmark labels...')
 		ll = create_labeled_landmarks(g, True)
+
+	for spi in args.spi:
+		sp = shortest_path(spi[0], spi[1], ll)
+		print('shortest path {} --> {} --> {}: {}'.format(spi[0], sp[1], spi[1], sp[0]))
 
 	if args.save:
 		print('exporting labeled landmarks to \'{}\'...'.format(args.save))
