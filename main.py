@@ -5,6 +5,7 @@ from argparse import ArgumentParser
 from graph import Graph
 from collections import deque
 import json
+import sys
 
 
 def bfs(graph, vert_root, use_pruning, landmarks):
@@ -35,6 +36,9 @@ def create_labeled_landmarks(graph, use_pruning):
 	verts = graph.get_verts()
 	d = dict.fromkeys(verts)
 
+	total = len(verts)
+	current = 0
+
 	# create empty index
 	for v in verts:
 		d[v] = {}
@@ -44,7 +48,12 @@ def create_labeled_landmarks(graph, use_pruning):
 		# L_{i} -> L_{i+1}
 		for bfs_vert in bfs_dists:
 			d[bfs_vert][vert] = bfs_dists[bfs_vert]
+		
+		current += 1
+		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
+		sys.stdout.flush()
 
+	sys.stdout.write('\n')
 	return d
 
 
