@@ -17,12 +17,12 @@ def bfs(graph, vert_root, use_pruning, landmarks):
 
 	dists[vert_root] = 0
 	visited[vert_root] = True
-	q.append(vert_root)
+	q.appendleft(vert_root)
 
 	while q:
 		vert = q.pop()
 		dist = dists[vert] + 1
-		for neighbor in graph.get_connected_verts(vert):
+		for neighbor in graph.get_neighbors(vert):
 			if not visited[neighbor]:
 				visited[neighbor] = True
 				# pruning happens when there's already a distance and it's shorter
@@ -78,7 +78,7 @@ def export_json(file_name, content):
 
 
 def import_json(file_name):
-	with open(file_name) as f:    
+	with open(file_name, 'r') as f:    
 		content = json.load(f)
 
 	return content
@@ -91,10 +91,10 @@ def time_diff_s(time_from):
 def main():
 	ap = ArgumentParser()
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
-	ap.add_argument('--pattern', default='\d+\\t\d+', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
-	ap.add_argument('--split', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
-	ap.add_argument('--fromfile', help='import labeled landmarks from JSON file')
-	ap.add_argument('--save', help='dump the labeled landmarks into a JSON file')
+	ap.add_argument('--pattern', metavar='PATTERN', default='\d+\\t\d+', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
+	ap.add_argument('--split', metavar='PATTERN', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
+	ap.add_argument('--fromfile', metavar='FILE', help='import labeled landmarks from JSON file')
+	ap.add_argument('--save', metavar='FILE', help='dump the labeled landmarks into a JSON file')
 	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
 	args = ap.parse_args()
 

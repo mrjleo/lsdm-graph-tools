@@ -10,7 +10,7 @@ class Graph(object):
 
 
 	def add_vert(self, vert):
-		if not vert in self.graph:
+		if not self.is_vert(vert):
 			self.graph[vert] = []
 
 
@@ -30,13 +30,13 @@ class Graph(object):
 
 		if not v_to in self.graph[v_from]:
 			self.graph[v_from].append(v_to)
-	
+
 
 	def get_verts(self):
 		return self.graph.keys()
 
 
-	def get_connected_verts(self, vert):
+	def get_neighbors(self, vert):
 		return self.graph[vert]
 
 
@@ -44,11 +44,15 @@ class Graph(object):
 		return vert in self.graph
 
 
-	def is_edge(self, edge):
+	def is_directed_edge(self, edge):
 		v_from = edge[0]
 		v_to = edge[1]
 
-		return is_vert(v_from) and v_to in get_connected_verts(v_from)
+		return self.is_vert(v_from) and v_to in self.get_neighbors(v_from)
+
+
+	def is_undirected_edge(self, edge):
+		return self.is_directed_edge(edge) and self.is_directed_edge(edge[::-1])
 
 
 	@staticmethod
