@@ -59,7 +59,7 @@ def create_labeled_landmarks(graph, use_pruning):
 
 def shortest_path(vert1, vert2, d):
 	sp = float("inf")
-	hop = '(none)'
+	hop = ''
 
 	for vert in d[vert1]:
 		if vert in d[vert2]:
@@ -90,7 +90,7 @@ def main():
 	ap.add_argument('--split', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
 	ap.add_argument('--fromfile', help='import labeled landmarks from JSON file')
 	ap.add_argument('--save', help='dump the labeled landmarks into a JSON file')
-	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 und V2')
+	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
 	args = ap.parse_args()
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
