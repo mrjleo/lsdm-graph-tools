@@ -4,6 +4,7 @@
 from argparse import ArgumentParser
 from graph import Graph
 from collections import deque
+import json
 
 
 def bfs(graph, vert_root, use_pruning, landmarks):
@@ -61,18 +62,41 @@ def shortest_path(vert1, vert2, d):
 	return [sp, hop];
 
 
+def export_json(file_name, content):
+	with open(file_name, 'w') as f:
+		json.dump(content, f)
+
+
+def import_json(file_name):
+	with open(file_name) as f:    
+		content = json.load(f)
+
+	return content
+
+
 def main():
 	ap = ArgumentParser()
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
 	ap.add_argument('--pattern', default='\d+\\t\d+', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
 	ap.add_argument('--split', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
+	ap.add_argument('--fromfile', help='import labeled landmarks from JSON file')
+	ap.add_argument('--save', help='dump the labeled landmarks into a JSON file')
 	args = ap.parse_args()
 
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
 	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
 	print('created graph with {} vertices'.format(len(g.get_verts())))
-	print('creating landmark labels...')
-	ll = create_labeled_landmarks(g, True)
+
+	if args.fromfile:
+		print('importing labeled landmarks from \'{}\'...'.format(args.fromfile))
+		ll = import_json(args.fromfile)
+	else:
+		print('creating landmark labels...')
+		ll = create_labeled_landmarks(g, True)
+
+	if args.save:
+		print('exporting labeled landmarks to \'{}\'...'.format(args.save))
+		export_json(args.save, ll)
 
 
 if __name__ == '__main__':
