@@ -6,28 +6,31 @@ from graph import Graph
 from collections import deque
 
 
-def bfs(graph, vert_root):
+def bfs(graph, vert_root, use_pruning, landmarks):
 	verts = graph.get_verts()
-	dists = dict.fromkeys(verts, 0)
+	dists = {}
 	visited = dict.fromkeys(verts, False)
 	q = deque()
 
 	dists[vert_root] = 0
 	visited[vert_root] = True
 	q.append(vert_root)
-	
+
 	while q:
 		vert = q.pop()
+		dist = dists[vert] + 1
 		for neighbor in graph.get_connected_verts(vert):
 			if not visited[neighbor]:
-				dists[neighbor] = dists[vert] + 1
-				q.append(neighbor)
 				visited[neighbor] = True
+				# pruning happens when there's already a distance and it's shorter
+				if not use_pruning or dist < shortest_path(vert_root, neighbor, landmarks)[0]:
+					dists[neighbor] = dist
+					q.appendleft(neighbor)
 
 	return dists
 	
 
-def create_ll_naiive(graph):
+def create_labeled_landmarks(graph, use_pruning):
 	verts = graph.get_verts()
 	d = dict.fromkeys(verts)
 
@@ -36,7 +39,7 @@ def create_ll_naiive(graph):
 		d[v] = {}
 
 	for vert in verts:
-		bfs_dists = bfs(graph, vert)
+		bfs_dists = bfs(graph, vert, use_pruning, d)
 		# L_{i} -> L_{i+1}
 		for bfs_vert in bfs_dists:
 			d[bfs_vert][vert] = bfs_dists[bfs_vert]
@@ -48,8 +51,8 @@ def shortest_path(vert1, vert2, d):
 	sp = float("inf")
 	hop = '(none)'
 
-	for vert in d:
-		if vert in d[vert1] and vert in d[vert2]:
+	for vert in d[vert1]:
+		if vert in d[vert2]:
 			path = d[vert1][vert] + d[vert2][vert]
 			if path < sp:
 				sp = path
@@ -69,9 +72,7 @@ def main():
 	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
 	print('created graph with {} vertices'.format(len(g.get_verts())))
 	print('creating landmark labels...')
-	ll = create_ll_naiive(g)
-
-	print(shortest_path('0','4', ll))
+	ll = create_labeled_landmarks(g, True)
 
 
 if __name__ == '__main__':
