@@ -6,6 +6,7 @@ from graph import Graph
 from collections import deque
 import json
 import sys
+import time
 
 
 def bfs(graph, vert_root, use_pruning, landmarks):
@@ -83,6 +84,10 @@ def import_json(file_name):
 	return content
 
 
+def time_diff_s(time_from):
+	return (time.time() - time_from) / 1000
+
+
 def main():
 	ap = ArgumentParser()
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
@@ -93,17 +98,25 @@ def main():
 	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
 	args = ap.parse_args()
 
+	# create graph
 	print('reading file \'{}\'...'.format(args.INPUT_FILE))
+	time_start = time.time()
 	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
-	print('created graph with {} vertices'.format(len(g.get_verts())))
+	time_end = time_diff_s(time_start)
+	print('created graph with {} vertices [{:.2f}s]'.format(len(g.get_verts()), time_end))
 
+	# create labeled landmarks
+	time_start = time.time()
 	if args.fromfile:
 		print('importing labeled landmarks from \'{}\'...'.format(args.fromfile))
 		ll = import_json(args.fromfile)
 	else:
-		print('creating landmark labels...')
+		print('creating labeled landmarks...')
 		ll = create_labeled_landmarks(g, True)
+	time_end = time_diff_s(time_start)
+	print('created labeled landmarks [{:.2f}s]'.format(time_end))
 
+	# execute all tasks
 	if args.sp:
 		for sp_req in args.sp:
 			sp = shortest_path(sp_req[0], sp_req[1], ll)
