@@ -11,7 +11,7 @@ class Graph(object):
 
 	def add_vert(self, vert):
 		if not self.is_vert(vert):
-			self.graph[vert] = []
+			self.graph[vert] = set()
 
 
 	def add_undirected_edge(self, edge):
@@ -29,7 +29,7 @@ class Graph(object):
 		self.add_vert(v_to)
 
 		if not v_to in self.graph[v_from]:
-			self.graph[v_from].append(v_to)
+			self.graph[v_from].add(v_to)
 
 
 	def get_verts(self):
