@@ -7,49 +7,43 @@ from collections import deque
 import json
 import sys
 import time
-
-
-def bfs(graph, vert_root, use_pruning, landmarks):
-	verts = graph.get_verts()
-	dists = {}
-	visited = dict.fromkeys(verts, False)
-	q = deque()
-
-	dists[vert_root] = 0
-	visited[vert_root] = True
-	q.appendleft(vert_root)
-
-	while q:
-		vert = q.pop()
-		dist = dists[vert] + 1
-		for neighbor in graph.get_neighbors(vert):
-			if not visited[neighbor]:
-				visited[neighbor] = True
-				# pruning happens when there's already a distance and it's shorter
-				if not use_pruning or dist < shortest_path(vert_root, neighbor, landmarks)[0]:
-					dists[neighbor] = dist
-					q.appendleft(neighbor)
-
-	return dists
 	
 
 def create_labeled_landmarks(graph, use_pruning):
 	verts = graph.get_verts()
+	
+	# distances: d[v] is a (pruned) table of all distances from/to v
 	d = dict.fromkeys(verts)
 
+	# for progess indicator
 	total = len(verts)
 	current = 0
 
 	# create empty index
 	for v in verts:
 		d[v] = {}
+		d[v][v] = 0
 
-	for vert in verts:
-		bfs_dists = bfs(graph, vert, use_pruning, d)
-		# L_{i} -> L_{i+1}
-		for bfs_vert in bfs_dists:
-			d[bfs_vert][vert] = bfs_dists[bfs_vert]
+	for v in verts:
+		# bfs from v
+		visited = dict.fromkeys(verts, False)
+		q = deque()
+
+		visited[v] = True
+		q.appendleft(v)
+
+		while q:
+			next_vert = q.pop()
+			dist = d[next_vert][v] + 1
+			for neighbor in graph.get_neighbors(next_vert):
+				if not visited[neighbor]:
+					visited[neighbor] = True
+					# pruning happens when there's already a distance and it's shorter
+					if not use_pruning or dist < shortest_path(v, neighbor, d)[0]:
+						d[neighbor][v] = dist
+						q.appendleft(neighbor)
 		
+		# show progress
 		current += 1
 		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
 		sys.stdout.flush()
