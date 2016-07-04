@@ -25,11 +25,11 @@ optional arguments:
 ```
 
 # Examples
-- calculate the shortest path between two nodes `1 --> 2`:  
+- calculate the shortest path between two nodes `1 --> 2`, creating landmark labels on-the-fly:  
 ```
 ./main.py mygraph.txt -sp 1 2
 ```
-- create the landmark labels and dump them in a file:
+- create landmark labels and dump them into a file:
 ```
 ./main.py mygraph.txt --save mylabels.json
 ```
