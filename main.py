@@ -106,7 +106,7 @@ def main():
 
 	for spi in args.spi:
 		sp = shortest_path(spi[0], spi[1], ll)
-		print('shortest path {} --> {} --> {}: {}'.format(spi[0], sp[1], spi[1], sp[0]))
+		print('shortest path ({}) --> ({}) --> ({}): length {}'.format(spi[0], sp[1], spi[1], sp[0]))
 
 	if args.save:
 		print('exporting labeled landmarks to \'{}\'...'.format(args.save))
