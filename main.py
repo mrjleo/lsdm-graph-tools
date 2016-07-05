@@ -44,10 +44,9 @@ def create_labeled_landmarks(graph, naiive):
 				# calculate shortest path for pruning
 				sp = float('inf')
 				for w in L[u]:
-					if w in T:
-						path = L[u][w] + T[w]
-						if path < sp:
-							sp = path
+					path = L[u][w] + T[w]
+					if path < sp:
+						sp = path
 			
 			# naiive => never prune
 			if naiive or sp > P[u]:
