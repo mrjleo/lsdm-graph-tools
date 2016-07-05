@@ -37,12 +37,12 @@ def create_labeled_landmarks(graph, naiive):
 			u = Q.pop()
 			# naiive => never prune
 			if naiive or shortest_path_query(v, u, L)[0] > P[u]:
-				visited.append(u)
 				Lnew[u] = P[u]
 
 				for w in graph.get_neighbors(u):
 					if P[w] == float('inf'):
 						P[w] = P[u] + 1
+						visited.append(w)
 						Q.appendleft(w)
 
 		# L_{k} <- L_{k-1}
