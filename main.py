@@ -9,11 +9,10 @@ import sys
 import time
 	
 
-def create_labeled_landmarks(graph, use_pruning):
+def create_labeled_landmarks(graph, naiive):
 	verts = graph.get_verts()
-	
-	# distances: d[v] is a (pruned) table of all distances from/to v
-	d = dict.fromkeys(verts)
+	L = dict.fromkeys(verts)
+	P = dict.fromkeys(verts)
 
 	# for progess indicator
 	total = len(verts)
@@ -21,27 +20,38 @@ def create_labeled_landmarks(graph, use_pruning):
 
 	# create empty index
 	for v in verts:
-		d[v] = {}
-		d[v][v] = 0
+		L[v] = {}
+
+		# initialize only once for better performance
+		P[v] = float('inf')
 
 	for v in verts:
 		# bfs from v
-		visited = dict.fromkeys(verts, False)
-		q = deque()
+		visited = [v]
+		Q = deque()
+		Q.appendleft(v)
+		P[v] = 0
+		Lnew = {}
 
-		visited[v] = True
-		q.appendleft(v)
+		while Q:
+			u = Q.pop()
+			# naiive => never prune
+			if naiive or shortest_path_query(v, u, L)[0] > P[u]:
+				visited.append(u)
+				Lnew[u] = P[u]
 
-		while q:
-			next_vert = q.pop()
-			dist = d[next_vert][v] + 1
-			for neighbor in graph.get_neighbors(next_vert):
-				if not visited[neighbor]:
-					visited[neighbor] = True
-					# pruning happens when there's already a distance and it's shorter
-					if not use_pruning or dist < shortest_path(v, neighbor, d)[0]:
-						d[neighbor][v] = dist
-						q.appendleft(neighbor)
+				for w in graph.get_neighbors(u):
+					if P[w] == float('inf'):
+						P[w] = P[u] + 1
+						Q.appendleft(w)
+
+		# L_{k} <- L_{k-1}
+		for u in Lnew:
+			L[u][v] = Lnew[u]
+
+		# reset
+		for u in visited:
+			P[u] = float('inf')
 		
 		# show progress
 		current += 1
@@ -49,16 +59,16 @@ def create_labeled_landmarks(graph, use_pruning):
 		sys.stdout.flush()
 
 	sys.stdout.write('\n')
-	return d
+	return L
 
 
-def shortest_path(vert1, vert2, d):
-	sp = float("inf")
+def shortest_path_query(vert1, vert2, L):
+	sp = float('inf')
 	hop = ''
 
-	for vert in d[vert1]:
-		if vert in d[vert2]:
-			path = d[vert1][vert] + d[vert2][vert]
+	for vert in L[vert1]:
+		if vert in L[vert2]:
+			path = L[vert1][vert] + L[vert2][vert]
 			if path < sp:
 				sp = path
 				hop = vert
@@ -114,7 +124,7 @@ def main():
 	# execute all tasks
 	if args.sp:
 		for sp_req in args.sp:
-			sp = shortest_path(sp_req[0], sp_req[1], ll)
+			sp = shortest_path_query(sp_req[0], sp_req[1], ll)
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
 
 	if args.save:
