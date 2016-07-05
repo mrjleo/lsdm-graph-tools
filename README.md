@@ -7,7 +7,7 @@ Currently supported:
 # Usage
 ```
 usage: main.py [-h] [--pattern PATTERN] [--split PATTERN] [--fromfile FILE]
-               [--save FILE] [-sp V1 V2]
+               [--save FILE] [--naiive] [-sp V1 V2]
                INPUT_FILE
 
 positional arguments:
@@ -21,6 +21,7 @@ optional arguments:
                      input file (default: \t)
   --fromfile FILE    import labeled landmarks from JSON file
   --save FILE        dump the labeled landmarks into a JSON file
+  --naiive           use naiive landmark labeling (no pruning)
   -sp V1 V2          calculate the shortest path between V1 and V2
 ```
 
