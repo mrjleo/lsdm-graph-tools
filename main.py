@@ -12,7 +12,10 @@ import time
 def create_labeled_landmarks(graph, naiive):
 	verts = graph.get_verts()
 	L = dict.fromkeys(verts)
-	P = dict.fromkeys(verts)
+	# initialize only once for better performance
+	P = dict.fromkeys(verts, float('inf'))
+	# for querying
+	T = dict.fromkeys(verts, float('inf'))
 
 	# for progess indicator
 	total = len(verts)
@@ -22,9 +25,6 @@ def create_labeled_landmarks(graph, naiive):
 	for v in verts:
 		L[v] = {}
 
-		# initialize only once for better performance
-		P[v] = float('inf')
-
 	for v in verts:
 		# bfs from v
 		visited = []
@@ -32,21 +32,37 @@ def create_labeled_landmarks(graph, naiive):
 		Q.appendleft(v)
 		P[v] = 0
 
+		# for querying
+		for w in L[v]:
+			T[w] = L[v][w]
+
 		while Q:
 			u = Q.pop()
 			visited.append(u)
+
+			if not naiive:
+				# calculate shortest path for pruning
+				sp = float('inf')
+				for w in L[u]:
+					if w in T:
+						path = L[u][w] + T[w]
+						if path < sp:
+							sp = path
+			
 			# naiive => never prune
-			if naiive or shortest_path_query(v, u, L)[0] > P[u]:
+			if naiive or sp > P[u]:
 				for w in graph.get_neighbors(u):
 					if P[w] == float('inf'):
 						P[w] = P[u] + 1
 						Q.appendleft(w)
 
-		# L_{k} <- L_{k-1}
 		# reset
 		for u in visited:
+			# L_{k} <- L_{k-1}
 			L[u][v] = P[u]
 			P[u] = float('inf')
+		for w in L[v]:
+			T[w] = float('inf')
 		
 		# show progress
 		current += 1
