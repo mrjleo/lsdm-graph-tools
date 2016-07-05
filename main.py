@@ -27,30 +27,25 @@ def create_labeled_landmarks(graph, naiive):
 
 	for v in verts:
 		# bfs from v
-		visited = [v]
+		visited = []
 		Q = deque()
 		Q.appendleft(v)
 		P[v] = 0
-		Lnew = {}
 
 		while Q:
 			u = Q.pop()
+			visited.append(u)
 			# naiive => never prune
 			if naiive or shortest_path_query(v, u, L)[0] > P[u]:
-				Lnew[u] = P[u]
-
 				for w in graph.get_neighbors(u):
 					if P[w] == float('inf'):
 						P[w] = P[u] + 1
-						visited.append(w)
 						Q.appendleft(w)
 
 		# L_{k} <- L_{k-1}
-		for u in Lnew:
-			L[u][v] = Lnew[u]
-
 		# reset
 		for u in visited:
+			L[u][v] = P[u]
 			P[u] = float('inf')
 		
 		# show progress
