@@ -117,7 +117,7 @@ def main():
 		ll = import_json(args.fromfile)
 	else:
 		print('creating labeled landmarks...')
-		ll = create_labeled_landmarks(g, not args.naiive)
+		ll = create_labeled_landmarks(g, args.naiive)
 	time_end = time_diff_s(time_start)
 	print('created labeled landmarks [{:.2f}s]'.format(time_end))
 
