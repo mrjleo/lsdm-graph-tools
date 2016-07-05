@@ -89,6 +89,7 @@ def main():
 	ap.add_argument('--split', metavar='PATTERN', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
 	ap.add_argument('--fromfile', metavar='FILE', help='import labeled landmarks from JSON file')
 	ap.add_argument('--save', metavar='FILE', help='dump the labeled landmarks into a JSON file')
+	ap.add_argument('--naiive', action='store_true', help='use naiive landmark labeling (no pruning)')
 	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
 	args = ap.parse_args()
 
@@ -106,7 +107,7 @@ def main():
 		ll = import_json(args.fromfile)
 	else:
 		print('creating labeled landmarks...')
-		ll = create_labeled_landmarks(g, True)
+		ll = create_labeled_landmarks(g, not args.naiive)
 	time_end = time_diff_s(time_start)
 	print('created labeled landmarks [{:.2f}s]'.format(time_end))
 
