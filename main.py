@@ -89,7 +89,7 @@ def import_json(file_name):
 
 
 def time_diff_s(time_from):
-	return (time.time() - time_from) / 1000
+	return (time.time() - time_from)
 
 
 def main():
@@ -108,7 +108,7 @@ def main():
 	time_start = time.time()
 	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
 	time_end = time_diff_s(time_start)
-	print('created graph with {} vertices [{:.2f}s]'.format(len(g.get_verts()), time_end))
+	print('created graph with {} vertices [{:.3f}s]'.format(len(g.get_verts()), time_end))
 
 	# create labeled landmarks
 	time_start = time.time()
@@ -119,7 +119,7 @@ def main():
 		print('creating labeled landmarks...')
 		ll = create_labeled_landmarks(g, args.naiive)
 	time_end = time_diff_s(time_start)
-	print('created labeled landmarks [{:.2f}s]'.format(time_end))
+	print('created labeled landmarks [{:.3f}s]'.format(time_end))
 
 	# execute all tasks
 	if args.sp:
