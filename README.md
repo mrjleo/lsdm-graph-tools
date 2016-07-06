@@ -6,8 +6,9 @@ Currently supported:
 
 # Usage
 ```
-usage: main.py [-h] [--pattern PATTERN] [--split PATTERN] [--fromfile FILE]
-               [--save FILE] [--naiive] [-sp V1 V2]
+usage: main.py [-h] [--pattern PATTERN] [--split PATTERN] [--indexfile FILE]
+               [--saveindex FILE] [--noprune] [-sp V1 V2] [--triafile FILE]
+               [--savetrias FILE] [-cc V]
                INPUT_FILE
 
 positional arguments:
@@ -19,10 +20,13 @@ optional arguments:
                      (default: \d+\t\d+)
   --split PATTERN    specify a pattern to use when splitting the lines of the
                      input file (default: \t)
-  --fromfile FILE    import labeled landmarks from JSON file
-  --save FILE        dump the labeled landmarks into a JSON file
-  --naiive           use naiive landmark labeling (no pruning)
-  -sp V1 V2          calculate the shortest path between V1 and V2
+  --indexfile FILE   import labeled landmarks from JSON file
+  --saveindex FILE   dump the labeled landmarks into a JSON file
+  --noprune          use naiive landmark labeling (no pruning)
+  -sp V1 V2          calculate the shortest path between vertices V1 and V2
+  --triafile FILE    import triangle counts from JSON file
+  --savetrias FILE   dump the triangle counts into a JSON file
+  -cc V              calculate the clustering coefficient of vertex V
 ```
 
 # Examples
