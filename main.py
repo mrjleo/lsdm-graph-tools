@@ -168,10 +168,12 @@ def main():
 	ap.add_argument('INPUT_FILE', help='the file that contains the graph')
 	ap.add_argument('--pattern', metavar='PATTERN', default='\d+\\t\d+', help='specify a pattern to use when parsing the input file (default: \d+\\t\d+)')
 	ap.add_argument('--split', metavar='PATTERN', default='\\t', help='specify a pattern to use when splitting the lines of the input file (default: \\t)')
-	ap.add_argument('--fromfile', metavar='FILE', help='import labeled landmarks from JSON file')
-	ap.add_argument('--save', metavar='FILE', help='dump the labeled landmarks into a JSON file')
+	ap.add_argument('--indexfile', metavar='FILE', help='import labeled landmarks from JSON file')
+	ap.add_argument('--saveindex', metavar='FILE', help='dump the labeled landmarks into a JSON file')
 	ap.add_argument('--noprune', action='store_true', help='use naiive landmark labeling (no pruning)')
 	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
+	ap.add_argument('--triafile', metavar='FILE', help='import triangle counts from JSON file')
+	ap.add_argument('--savetrias', metavar='FILE', help='dump the triangle counts into a JSON file')
 	args = ap.parse_args()
 
 	# create graph
@@ -182,16 +184,28 @@ def main():
 	print('created adjacency list of graph with {} vertices [{:.3f}s]'.format(len(g.get_verts()), time_end))
 
 	# create labeled landmarks
-	if args.save or args.sp:
+	if args.saveindex or args.sp:
 		time_start = time.time()
-		if args.fromfile:
-			print('importing labeled landmarks from \'{}\'...'.format(args.fromfile))
-			ll = import_json(args.fromfile)
+		if args.indexfile:
+			print('importing labeled landmarks from \'{}\'...'.format(args.indexfile))
+			ll = import_json(args.indexfile)
 		else:
 			print('creating labeled landmarks...')
 			ll = create_labeled_landmarks(g, args.noprune)
 		time_end = time_diff_s(time_start)
 		print('created labeled landmarks [{:.3f}s]'.format(time_end))
+
+	# create triangle counts
+	if args.savetrias:
+		time_start = time.time()
+		if args.triafile:
+			print('importing triangle counts from \'{}\'...'.format(args.triafile))
+			trias = import_json(args.triafile)
+		else:
+			print('counting triangles...')
+			trias = count_triangles(g)
+		time_end = time_diff_s(time_start)
+		print('created triangle counts [{:.3f}s]'.format(time_end))
 
 	# execute all tasks
 	if args.sp:
@@ -199,9 +213,13 @@ def main():
 			sp = shortest_path_query(sp_req[0], sp_req[1], ll)
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
 
-	if args.save:
-		print('exporting labeled landmarks to \'{}\'...'.format(args.save))
-		export_json(args.save, ll)
+	if args.saveindex:
+		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
+		export_json(args.saveindex, ll)
+
+	if args.savetrias:
+		print('exporting triangle counts to \'{}\'...'.format(args.savetrias))
+		export_json(args.savetrias, trias)
 
 
 if __name__ == '__main__':
