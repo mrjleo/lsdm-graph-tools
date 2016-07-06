@@ -10,7 +10,7 @@ import time
 import math
 
 
-def compare(g, v, w):
+def less_than(g, v, w):
 	return g.degree(v) < g.degree(w) or	(g.degree(v) == g.degree(w) and v < w)
 
 
@@ -49,10 +49,10 @@ def count_triangles(graph):
 	# count rest of triangles
 	for v in nodes:
 		for w in verts:
-			if graph.is_directed_edge([v, w]) and compare(graph, v, w):
+			if graph.is_directed_edge([v, w]) and less_than(graph, v, w):
 				neighbors = graph.get_neighbors(v)
 				for u in neighbors:
-					if graph.is_directed_edge([u, w]) and compare(graph, v, u):
+					if graph.is_directed_edge([u, w]) and less_than(graph, v, u):
 						trias[v] += 1
 						trias[w] += 1
 						trias[u] += 1
@@ -68,7 +68,13 @@ def count_triangles(graph):
 
 	sys.stdout.write('\n')
 	return trias
-	
+
+
+def clustering_coeff(graph, v, trias):
+	deg_v = graph.degree(v)
+	dv_c_2 = math.factorial(deg_v) / (2 * math.factorial(deg_v - 2))
+	return trias[v] / dv_c_2
+
 
 def create_labeled_landmarks(graph, naiive):
 	verts = graph.get_verts()
@@ -160,7 +166,7 @@ def import_json(file_name):
 
 
 def time_diff_s(time_from):
-	return (time.time() - time_from)
+	return time.time() - time_from
 
 
 def main():
@@ -171,9 +177,10 @@ def main():
 	ap.add_argument('--indexfile', metavar='FILE', help='import labeled landmarks from JSON file')
 	ap.add_argument('--saveindex', metavar='FILE', help='dump the labeled landmarks into a JSON file')
 	ap.add_argument('--noprune', action='store_true', help='use naiive landmark labeling (no pruning)')
-	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between V1 and V2')
+	ap.add_argument('-sp', nargs=2, metavar=('V1', 'V2'), action='append', help='calculate the shortest path between vertices V1 and V2')
 	ap.add_argument('--triafile', metavar='FILE', help='import triangle counts from JSON file')
 	ap.add_argument('--savetrias', metavar='FILE', help='dump the triangle counts into a JSON file')
+	ap.add_argument('-cc', metavar='V', action='append', help='calculate the clustering coefficient of vertex V')
 	args = ap.parse_args()
 
 	# create graph
@@ -196,7 +203,7 @@ def main():
 		print('created labeled landmarks [{:.3f}s]'.format(time_end))
 
 	# create triangle counts
-	if args.savetrias:
+	if args.savetrias or args.cc:
 		time_start = time.time()
 		if args.triafile:
 			print('importing triangle counts from \'{}\'...'.format(args.triafile))
@@ -212,6 +219,11 @@ def main():
 		for sp_req in args.sp:
 			sp = shortest_path_query(sp_req[0], sp_req[1], ll)
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
+
+	if args.cc:
+		for cc_req in args.cc:
+			cc = clustering_coeff(g, cc_req, trias)
+			print('clustering coefficient of ({}): {}'.format(cc_req, cc))
 
 	if args.saveindex:
 		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
