@@ -65,13 +65,13 @@ class Graph(object):
 	@staticmethod
 	def from_file(file_name, pattern, split_by):
 		g = Graph()
-		input_file = open(file_name, 'r')
-		pattern_edge = re.compile(pattern)
+		with open(file_name, 'r') as input_file:
+			pattern_edge = re.compile(pattern)
 
-		for line in input_file:
-			line = line.strip()
-			if pattern_edge.match(line):
-				edge = re.split(split_by, line)
-				g.add_undirected_edge(edge)
+			for line in input_file:
+				line = line.strip()
+				if pattern_edge.match(line):
+					edge = re.split(split_by, line)
+					g.add_undirected_edge(edge)
 
 		return g
