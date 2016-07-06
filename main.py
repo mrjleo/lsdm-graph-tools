@@ -28,7 +28,7 @@ def count_triangles(graph):
 			hh_nodes.append(v)
 		else:
 			nodes.append(v)
-	print('{} of {} nodes are heavy hitters'.format(len(hh_nodes), len(nodes)))
+	print('{} of {} nodes are heavy hitters'.format(len(hh_nodes), len(verts)))
 
 	# for progess indicator
 	total = len(verts)
@@ -221,16 +221,15 @@ def main():
 		for sp_req in args.sp:
 			sp = shortest_path_query(sp_req[0], sp_req[1], ll)
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
-
 	if args.cc:
 		for cc_req in args.cc:
 			cc = clustering_coeff(g, cc_req, trias)
 			print('clustering coefficient of ({}): {}'.format(cc_req, cc))
 
+	# dump data into files
 	if args.saveindex:
 		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
 		export_json(args.saveindex, ll)
-
 	if args.savetrias:
 		print('exporting triangle counts to \'{}\'...'.format(args.savetrias))
 		export_json(args.savetrias, trias)
