@@ -10,6 +10,11 @@ import time
 import math
 
 
+def show_progress(current, total):
+	sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
+	sys.stdout.flush()
+
+
 def less_than(g, v, w):
 	return g.degree(v) < g.degree(w) or	(g.degree(v) == g.degree(w) and v < w)
 
@@ -41,10 +46,8 @@ def count_triangles(graph):
 				if graph.is_directed_edge([v, u]) and graph.is_directed_edge([u, w]) and graph.is_directed_edge([w, v]):
 					trias[v] += 1
 		
-		# show progress
 		current += 1
-		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
-		sys.stdout.flush()
+		show_progress(current, total)
 
 	# count rest of triangles
 	for v in nodes:
@@ -57,10 +60,8 @@ def count_triangles(graph):
 						trias[w] += 1
 						trias[u] += 1
 		
-		# show progress
 		current += 1
-		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
-		sys.stdout.flush()
+		show_progress(current, total)
 
 	# we counted everything twice
 	for t in trias:
@@ -132,9 +133,8 @@ def create_labeled_landmarks(graph, naiive):
 		for w in L[v]:
 			T[w] = float('inf')
 		
-		# show progress
 		current += 1
-		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
+		show_progress(current, total)
 		sys.stdout.flush()
 
 	sys.stdout.write('\n')
