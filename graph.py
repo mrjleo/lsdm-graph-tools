@@ -7,6 +7,7 @@ import re
 class Graph(object):
 	def __init__(self):
 		self.graph = {}
+		self.u_edge_count = 0
 
 
 	def add_vert(self, vert):
@@ -16,8 +17,8 @@ class Graph(object):
 
 	def add_undirected_edge(self, edge):
 		# add 2 directed edges to simulate undirected edge
-		self.add_directed_edge(edge)
-		self.add_directed_edge(edge[::-1])
+		if self.add_directed_edge(edge) and self.add_directed_edge(edge[::-1]):
+			self.u_edge_count += 1
 
 
 	# edge = [v_from, v_to]
@@ -30,6 +31,8 @@ class Graph(object):
 
 		if not v_to in self.graph[v_from]:
 			self.graph[v_from].add(v_to)
+			return True
+		return False
 
 
 	def get_verts(self):
@@ -53,6 +56,10 @@ class Graph(object):
 
 	def is_undirected_edge(self, edge):
 		return self.is_directed_edge(edge) and self.is_directed_edge(edge[::-1])
+
+	
+	def degree(self, vert):
+		return len(self.get_neighbors(vert))
 
 
 	@staticmethod

@@ -7,6 +7,67 @@ from collections import deque
 import json
 import sys
 import time
+import math
+
+
+def compare(g, v, w):
+	return g.degree(v) < g.degree(w) or	(g.degree(v) == g.degree(w) and v < w)
+
+
+def count_triangles(graph):
+	verts = graph.get_verts()
+	trias = dict.fromkeys(verts, 0)
+
+	# partition nodes in heavy hitters and normal nodes
+	nodes = []
+	hh_nodes = []
+	hh_deg = math.sqrt(graph.u_edge_count)
+	print('min. degree for heavy hitters: sqrt(m) = {}'.format(hh_deg))
+	for v in verts:
+		if graph.degree(v) > hh_deg:
+			hh_nodes.append(v)
+		else:
+			nodes.append(v)
+	print('{} of {} nodes are heavy hitters'.format(len(hh_nodes), len(nodes)))
+
+	# for progess indicator
+	total = len(verts)
+	current = 0
+
+	# count heavy-hitter triangles
+	for v in hh_nodes:
+		for u in hh_nodes:
+			for w in hh_nodes:
+				if graph.is_directed_edge([v, u]) and graph.is_directed_edge([u, w]) and graph.is_directed_edge([w, v]):
+					trias[v] += 1
+		
+		# show progress
+		current += 1
+		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
+		sys.stdout.flush()
+
+	# count rest of triangles
+	for v in nodes:
+		for w in verts:
+			if graph.is_directed_edge([v, w]) and compare(graph, v, w):
+				neighbors = graph.get_neighbors(v)
+				for u in neighbors:
+					if graph.is_directed_edge([u, w]) and compare(graph, v, u):
+						trias[v] += 1
+						trias[w] += 1
+						trias[u] += 1
+		
+		# show progress
+		current += 1
+		sys.stdout.write('\r{}%\t[{}/{}]'.format(int(100 * current / total), current, total))
+		sys.stdout.flush()
+
+	# we counted everything twice
+	for t in trias:
+		trias[t] = int(trias[t] / 2)
+
+	sys.stdout.write('\n')
+	return trias
 	
 
 def create_labeled_landmarks(graph, naiive):
@@ -118,18 +179,19 @@ def main():
 	time_start = time.time()
 	g = Graph.from_file(args.INPUT_FILE, args.pattern, args.split)
 	time_end = time_diff_s(time_start)
-	print('created graph with {} vertices [{:.3f}s]'.format(len(g.get_verts()), time_end))
+	print('created adjacency list of graph with {} vertices [{:.3f}s]'.format(len(g.get_verts()), time_end))
 
 	# create labeled landmarks
-	time_start = time.time()
-	if args.fromfile:
-		print('importing labeled landmarks from \'{}\'...'.format(args.fromfile))
-		ll = import_json(args.fromfile)
-	else:
-		print('creating labeled landmarks...')
-		ll = create_labeled_landmarks(g, args.naiive)
-	time_end = time_diff_s(time_start)
-	print('created labeled landmarks [{:.3f}s]'.format(time_end))
+	if args.save or args.sp:
+		time_start = time.time()
+		if args.fromfile:
+			print('importing labeled landmarks from \'{}\'...'.format(args.fromfile))
+			ll = import_json(args.fromfile)
+		else:
+			print('creating labeled landmarks...')
+			ll = create_labeled_landmarks(g, args.naiive)
+		time_end = time_diff_s(time_start)
+		print('created labeled landmarks [{:.3f}s]'.format(time_end))
 
 	# execute all tasks
 	if args.sp:
