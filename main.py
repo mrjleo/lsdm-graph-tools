@@ -72,6 +72,8 @@ def count_triangles(graph):
 
 def clustering_coeff(graph, v, trias):
 	deg_v = graph.degree(v)
+	if deg_v < 2:
+		return float('nan')
 	dv_c_2 = math.factorial(deg_v) / (2 * math.factorial(deg_v - 2))
 	return trias[v] / dv_c_2
 
