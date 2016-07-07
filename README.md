@@ -1,8 +1,9 @@
 # Overview
-Currently supported:
+Features:
 - parse graph from file
 - create/export/import (pruned) landmark labels
-- calculate shortest paths between nodes
+- calculate shortest paths between vertices
+- calculate clustering coefficients of vertices
 
 # Usage
 ```
@@ -42,7 +43,7 @@ optional arguments:
 ```
 ./main.py mygraph.txt --indexfile mylabels.json -sp 1 2 -sp 3 4
 ```
-- calculate the clustering coefficient of vertices `(1)` and `(2)`, counting triangles on-the-fly:
+- calculate the clustering coefficients of vertices `(1)` and `(2)`, counting triangles on-the-fly:
 ```
 ./main.py mygraph.txt -cc 1 -cc 2
 ```
