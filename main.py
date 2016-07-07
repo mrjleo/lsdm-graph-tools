@@ -16,7 +16,7 @@ def show_progress(current, total):
 
 
 def less_than(g, v, w):
-	return g.degree(v) < g.degree(w) or	(g.degree(v) == g.degree(w) and v < w)
+	return g.degree(v) < g.degree(w) or g.degree(v) == g.degree(w) and v < w
 
 
 def count_triangles(graph):
@@ -33,7 +33,7 @@ def count_triangles(graph):
 			hh_nodes.append(v)
 		else:
 			nodes.append(v)
-	print('{} of {} nodes are heavy hitters'.format(len(hh_nodes), len(verts)))
+	print('found {} heavy hitter(s)'.format(len(hh_nodes)))
 
 	# for progess indicator
 	total = len(verts)
@@ -127,7 +127,7 @@ def create_labeled_landmarks(graph, naiive):
 
 		# reset
 		for u in visited:
-			# L_{k} <- L_{k-1}
+			# update L with results from BFS
 			L[u][v] = P[u]
 			P[u] = float('inf')
 		for w in L[v]:
