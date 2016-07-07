@@ -30,15 +30,27 @@ optional arguments:
 ```
 
 # Examples
-- calculate the shortest path between two nodes `1 --> 2`, creating landmark labels on-the-fly:  
+- calculate the shortest path between two vertices `(1) <--> (2)`, creating landmark labels on-the-fly:  
 ```
 ./main.py mygraph.txt -sp 1 2
 ```
 - create landmark labels and dump them into a file:
 ```
-./main.py mygraph.txt --save mylabels.json
+./main.py mygraph.txt --saveindex mylabels.json
 ```
-- import the landmark labels from a file and calculate the shortest paths between nodes `1 --> 2` and `3 --> 4`:
+- import the landmark labels from a file and calculate the shortest paths between vertices `(1) <--> (2)` and `(3) <--> (4)`:
 ```
-./main.py mygraph.txt --fromfile mylabels.json -sp 1 2 -sp 3 4
+./main.py mygraph.txt --indexfile mylabels.json -sp 1 2 -sp 3 4
+```
+- calculate the clustering coefficient of vertices `(1)` and `(2)`, counting triangles on-the-fly:
+```
+./main.py mygraph.txt -cc 1 -cc 2
+```
+- count triangles and dump the counts into a file:
+```
+./main.py mygraph.txt --savetrias mytriangles.json
+```
+- import the triangle counts from a file and calculate the clustering coefficient of vertex `(1)`:
+```
+./main.py mygraph.txt --triafile mytriangles.json -cc 1
 ```
