@@ -171,7 +171,7 @@ def import_json(file_name, graph):
 	with open(file_name, 'r') as f:    
 		content = json.load(f)
 
-	# convert json strings to original ints
+	# convert json strings back to original ints (dict keys)
 	labels = content['labels']
 	for l in labels:
 		idx = int(labels[l])
@@ -238,6 +238,17 @@ def main():
 		time_end = time_diff_s(time_start)
 		print('created triangle counts [{:.3f}s]'.format(time_end))
 
+	# dump data into files
+	if args.saveindex:
+		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
+		export_json(args.saveindex, ll, g)
+	if args.savetrias:
+		print('exporting triangle counts to \'{}\'...'.format(args.savetrias))
+		export_json(args.savetrias, trias, g)
+
+	if args.sp or args.cc:
+		print('\n========================RESULTS========================')
+
 	# execute all tasks
 	if args.sp:
 		for sp_req in args.sp:
@@ -247,14 +258,6 @@ def main():
 		for cc_req in args.cc:
 			cc = clustering_coeff(g, cc_req, trias)
 			print('clustering coefficient of ({}): {}'.format(cc_req, cc))
-
-	# dump data into files
-	if args.saveindex:
-		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
-		export_json(args.saveindex, ll, g)
-	if args.savetrias:
-		print('exporting triangle counts to \'{}\'...'.format(args.savetrias))
-		export_json(args.savetrias, trias, g)
 
 
 if __name__ == '__main__':
