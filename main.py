@@ -16,7 +16,7 @@ def show_progress(current, total):
 
 
 def less_than(g, v_idx, w_idx):
-	return g.degree(v_idx) < g.degree(w_idx) or g.degree(v_idx) == g.degree(w_idx) and v_idx < w
+	return g.degree(v_idx) < g.degree(w_idx) or g.degree(v_idx) == g.degree(w_idx) and v_idx < w_idx
 
 
 def count_triangles(graph):
