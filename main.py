@@ -138,7 +138,6 @@ def create_labeled_landmarks(graph, naiive):
 		
 		current += 1
 		show_progress(current, total)
-		sys.stdout.flush()
 
 	sys.stdout.write('\n')
 	return L
