@@ -5,6 +5,8 @@ Features:
 - calculate shortest paths between vertices
 - calculate clustering coefficients of vertices
 
+Tested with Python 2.7 and 3.4.
+
 # Usage
 ```
 usage: main.py [-h] [--pattern PATTERN] [--split PATTERN] [--indexfile FILE]
@@ -37,11 +39,11 @@ optional arguments:
 ```
 - create landmark labels and dump them into a file:
 ```
-./main.py mygraph.txt --saveindex mylabels.json
+./main.py mygraph.txt --saveindex myindex.json
 ```
 - import the landmark labels from a file and calculate the shortest paths between vertices `(1) <--> (2)` and `(3) <--> (4)`:
 ```
-./main.py mygraph.txt --indexfile mylabels.json -sp 1 2 -sp 3 4
+./main.py mygraph.txt --indexfile myindex.json -sp 1 2 -sp 3 4
 ```
 - calculate the clustering coefficients of vertices `(1)` and `(2)`, counting triangles on-the-fly:
 ```
