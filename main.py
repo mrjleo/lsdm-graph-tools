@@ -15,8 +15,8 @@ def show_progress(current, total):
 	sys.stdout.flush()
 
 
-def less_than(g, v, w):
-	return g.degree(v) < g.degree(w) or g.degree(v) == g.degree(w) and v < w
+def less_than(g, v_idx, w_idx):
+	return g.degree(v_idx) < g.degree(w_idx) or g.degree(v_idx) == g.degree(w_idx) and v_idx < w
 
 
 def count_triangles(graph):
@@ -71,12 +71,13 @@ def count_triangles(graph):
 	return trias
 
 
-def clustering_coeff(graph, v, trias):
-	deg_v = graph.degree(v)
+def clustering_coeff(graph, v_label, trias):
+	v_idx = graph.get_index(v_label)
+	deg_v = graph.degree(v_idx)
 	if deg_v < 2:
 		return float('nan')
 	dv_c_2 = math.factorial(deg_v) / (2.0 * math.factorial(deg_v - 2))
-	return trias[v] / dv_c_2
+	return trias[v_idx] / dv_c_2
 
 
 def create_labeled_landmarks(graph, naiive):
@@ -103,8 +104,9 @@ def create_labeled_landmarks(graph, naiive):
 		P[v] = 0
 
 		# for querying
-		for w in L[v]:
-			T[w] = L[v][w]
+		if not naiive:
+			for w in L[v]:
+				T[w] = L[v][w]
 
 		while Q:
 			u = Q.pop()
@@ -130,8 +132,9 @@ def create_labeled_landmarks(graph, naiive):
 			# update L with results from BFS
 			L[u][v] = P[u]
 			P[u] = float('inf')
-		for w in L[v]:
-			T[w] = float('inf')
+		if not naiive:
+			for w in L[v]:
+				T[w] = float('inf')
 		
 		current += 1
 		show_progress(current, total)
@@ -141,18 +144,21 @@ def create_labeled_landmarks(graph, naiive):
 	return L
 
 
-def shortest_path_query(vert1, vert2, L):
+def shortest_path_query(graph, v1_label, v2_label, L):
 	sp = float('inf')
 	hop = ''
 
-	for vert in L[vert1]:
-		if vert in L[vert2]:
-			path = L[vert1][vert] + L[vert2][vert]
+	idx1 = graph.get_index(v1_label)
+	idx2 = graph.get_index(v2_label)
+
+	for v in L[idx1]:
+		if v in L[idx2]:
+			path = L[idx1][v] + L[idx2][v]
 			if path < sp:
 				sp = path
-				hop = vert
+				hop = v
 
-	return [sp, hop];
+	return [sp, graph.get_label(hop)];
 
 
 def export_json(file_name, content):
@@ -219,7 +225,7 @@ def main():
 	# execute all tasks
 	if args.sp:
 		for sp_req in args.sp:
-			sp = shortest_path_query(sp_req[0], sp_req[1], ll)
+			sp = shortest_path_query(g, sp_req[0], sp_req[1], ll)
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
 	if args.cc:
 		for cc_req in args.cc:
