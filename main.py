@@ -167,7 +167,7 @@ def export_json(file_name, content, graph):
 		json.dump(content_new, f, indent=4)
 
 
-def import_json(file_name, graph):
+def import_json(file_name, graph, content_type):
 	with open(file_name, 'r') as f:    
 		content = json.load(f)
 
@@ -182,9 +182,12 @@ def import_json(file_name, graph):
 	content_new = {}
 	for c in content_old:
 		c_int = int(c)
-		content_new[c_int] = {}
-		for cc in content_old[c]:
-			content_new[c_int][int(cc)] = content_old[c][cc]
+		if content_type == 'trias': 
+			content_new[c_int] = content_old[c]
+		elif content_type == 'index':
+			content_new[c_int] = {}
+			for cc in content_old[c]:
+				content_new[c_int][int(cc)] = content_old[c][cc]
 
 	return content_new
 
@@ -219,7 +222,7 @@ def main():
 		time_start = time.time()
 		if args.indexfile:
 			print('importing labeled landmarks from \'{}\'...'.format(args.indexfile))
-			ll = import_json(args.indexfile, g)
+			ll = import_json(args.indexfile, g, 'index')
 		else:
 			print('creating labeled landmarks...')
 			ll = create_labeled_landmarks(g, args.noprune)
@@ -231,7 +234,7 @@ def main():
 		time_start = time.time()
 		if args.triafile:
 			print('importing triangle counts from \'{}\'...'.format(args.triafile))
-			trias = import_json(args.triafile, g)
+			trias = import_json(args.triafile, g, 'trias')
 		else:
 			print('counting triangles...')
 			trias = count_triangles(g)
