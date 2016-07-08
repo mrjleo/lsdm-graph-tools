@@ -161,16 +161,32 @@ def shortest_path_query(graph, v1_label, v2_label, L):
 	return [sp, graph.get_label(hop)];
 
 
-def export_json(file_name, content):
+def export_json(file_name, content, graph):
+	content_new = {'content': content, 'labels': graph.label_to_index}
 	with open(file_name, 'w') as f:
-		json.dump(content, f)
+		json.dump(content_new, f, indent=4)
 
 
-def import_json(file_name):
+def import_json(file_name, graph):
 	with open(file_name, 'r') as f:    
 		content = json.load(f)
 
-	return content
+	# convert json strings to original ints
+	labels = content['labels']
+	for l in labels:
+		idx = int(labels[l])
+		graph.label_to_index[l] = idx
+		graph.index_to_label[idx] = l
+
+	content_old = content['content']
+	content_new = {}
+	for c in content_old:
+		c_int = int(c)
+		content_new[c_int] = {}
+		for cc in content_old[c]:
+			content_new[c_int][int(cc)] = content_old[c][cc]
+
+	return content_new
 
 
 def time_diff_s(time_from):
@@ -203,7 +219,7 @@ def main():
 		time_start = time.time()
 		if args.indexfile:
 			print('importing labeled landmarks from \'{}\'...'.format(args.indexfile))
-			ll = import_json(args.indexfile)
+			ll = import_json(args.indexfile, g)
 		else:
 			print('creating labeled landmarks...')
 			ll = create_labeled_landmarks(g, args.noprune)
@@ -215,7 +231,7 @@ def main():
 		time_start = time.time()
 		if args.triafile:
 			print('importing triangle counts from \'{}\'...'.format(args.triafile))
-			trias = import_json(args.triafile)
+			trias = import_json(args.triafile, g)
 		else:
 			print('counting triangles...')
 			trias = count_triangles(g)
@@ -235,10 +251,10 @@ def main():
 	# dump data into files
 	if args.saveindex:
 		print('exporting labeled landmarks to \'{}\'...'.format(args.saveindex))
-		export_json(args.saveindex, ll)
+		export_json(args.saveindex, ll, g)
 	if args.savetrias:
 		print('exporting triangle counts to \'{}\'...'.format(args.savetrias))
-		export_json(args.savetrias, trias)
+		export_json(args.savetrias, trias, g)
 
 
 if __name__ == '__main__':
