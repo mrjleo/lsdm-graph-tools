@@ -3,6 +3,7 @@ Features:
 - parse graph from file
 - create/export/import (pruned) landmark labels
 - calculate shortest paths between vertices
+- create/export/import triangle counts
 - calculate clustering coefficients of vertices
 
 Tested with Python 2.7 and 3.4.
