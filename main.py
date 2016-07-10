@@ -251,8 +251,11 @@ def main():
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
 	if args.cc:
 		for cc_req in args.cc:
-			cc = clustering_coeff(g, cc_req, trias)
-			print('clustering coefficient of ({}): {}'.format(cc_req, cc))
+			try:
+				cc = clustering_coeff(g, cc_req, trias)
+				print('clustering coefficient of ({}): {}'.format(cc_req, cc))
+			except OverflowError:
+				print('could not calculate clustering coefficient of ({}): overflow error'.format(cc_req))
 
 
 if __name__ == '__main__':
