@@ -145,7 +145,6 @@ def create_labeled_landmarks(graph, naiive):
 
 def shortest_path_query(graph, v1_label, v2_label, L):
 	sp = float('inf')
-	hop = ''
 
 	idx1 = graph.get_index(v1_label)
 	idx2 = graph.get_index(v2_label)
@@ -157,6 +156,9 @@ def shortest_path_query(graph, v1_label, v2_label, L):
 				sp = path
 				hop = v
 
+	if sp == float('inf'):
+		return [sp, 'none']
+	
 	return [sp, graph.get_label(hop)];
 
 
