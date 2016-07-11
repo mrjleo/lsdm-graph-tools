@@ -159,7 +159,7 @@ def shortest_path_query(graph, v1_label, v2_label, L):
 	if sp == float('inf'):
 		return [sp, 'none']
 	
-	return [sp, graph.get_label(hop)];
+	return [sp, graph.get_label(hop)]
 
 
 def export_json(file_name, content):
