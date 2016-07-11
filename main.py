@@ -76,7 +76,7 @@ def clustering_coeff(graph, v_label, trias):
 	deg_v = graph.degree(v_idx)
 	if deg_v < 2:
 		return float('nan')
-	dv_c_2 = math.factorial(deg_v) / (2.0 * math.factorial(deg_v - 2))
+	dv_c_2 = deg_v * (deg_v - 1) / 2.0
 	return trias[v_idx] / dv_c_2
 
 
@@ -253,12 +253,9 @@ def main():
 			print('shortest path ({}) --> ({}) --> ({}): length {}'.format(sp_req[0], sp[1], sp_req[1], sp[0]))
 	if args.cc:
 		for cc_req in args.cc:
-			try:
-				cc = clustering_coeff(g, cc_req, trias)
-				print('clustering coefficient of ({}): {}'.format(cc_req, cc))
-			except OverflowError:
-				print('could not calculate clustering coefficient of ({}): overflow error'.format(cc_req))
-
+			cc = clustering_coeff(g, cc_req, trias)
+			print('clustering coefficient of ({}): {}'.format(cc_req, cc))
+			
 
 if __name__ == '__main__':
 	main()
